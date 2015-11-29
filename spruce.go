@@ -70,14 +70,14 @@ func Spruce(where string, args ...string) (*Result, error) {
 }
 
 type Merge struct {
-	Prune []string
+	Prune []string `json:"prune"`
 	YAML  []struct {
-		Filename string
-		Contents string
-	}
+		Filename string `json:"filename"`
+		Contents string `json:"contents"`
+	} `json:"yaml"`
 
-	Debug bool
-	Trace bool
+	Debug bool `json:"debug"`
+	Trace bool `json:"trace"`
 }
 
 func SpruceMerge(m Merge) (*Result, error) {

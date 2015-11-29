@@ -133,40 +133,83 @@ $(function () {
 
 	// Set up the CodeMirror editor for syntax higlighting
 	$('.yaml.code').each(function (i, textarea) {
-		CodeMirror.fromTextArea(textarea, {
-			theme       : 'spruce',
-			lineNumbers : true
-		});
-	})
+		$(textarea).data('editor',
+			CodeMirror.fromTextArea(textarea, {
+				theme       : 'spruce',
+				lineNumbers : true
+			}));
+	});
 
-	// Handle [Merge] clicks and form submission
+	// JSONify the form data entered so far...
+	formdata = function () {
+		return {
+			yaml  : yamls($('#yaml').data('editor').getValue()),
+			debug : $('#debug').is(':checked'),
+			trace : $('#trace').is(':checked'),
+			prune : prune($('#prune').val())
+		};
+	};
+
+	// Form submission is a no-op
 	$('#playground').submit(function (event) {
 		event.preventDefault();
+	});
+
+	// Handle [Merge] clicks to perform AJAX merge request
+	$('#playground #merge').click(function (event) {
 		$.ajax({
 			type: 'POST',
 			url:  '/spruce',
-			data: JSON.stringify({
-				yaml  : yamls($('#yaml').val()),
-				debug : $('#debug').is(':checked'),
-				trace : $('#trace').is(':checked'),
-				prune : prune($('#prune').val())
-			}),
+			data: JSON.stringify(formdata()),
 			success: function(raw) {
 				data = JSON.parse(raw);
-				console.dir(data);
-
 				$('#about, #stdout, #stderr').hide();
 
-				if (data.about != "") {
-					$('#about').html(data.about).show();
-				}
-				if (data.stdout != "") {
-					$('#stdout').html(data.stdout).show();
-				}
-				if (data.stderr != "") {
-					$('#stderr').html(colorize(data.stderr)).show();
-				}
+				if (data.about  != "") { $('#about').html(data.about).show(); }
+				if (data.stdout != "") { $('#stdout').html(data.stdout).show(); }
+				if (data.stderr != "") { $('#stderr').html(colorize(data.stderr)).show(); }
 			}
 		});
-	})
+	});
+
+	// Handle [Share] clicks to handle storage
+	$('#playground #share').click(function (event) {
+		event.preventDefault();
+		$.ajax({
+			type: 'POST',
+			url:  '/mem',
+			data: JSON.stringify(formdata()),
+			success: function(key) {
+				document.location.hash = key;
+			}
+		});
+	});
+
+	if (document.location.hash != "") {
+		key = document.location.hash.replace(/^#/, '')
+		$.ajax({
+			type: 'GET',
+			url:  '/mem?k=' + key,
+			success: function(raw) {
+				data = JSON.parse(raw);
+
+				// keys to prune
+				$('#prune').val("# one per line\n" + data.prune.join("\n") + "\n");
+
+				// YAML document(s)
+				var yaml = "";
+				for (var i = 0; i < data.yaml.length; i++) {
+					yaml += data.yaml[i].contents + "\n\n";
+				}
+				$('#yaml').data('editor').setValue(yaml);
+
+				// Debug / Trace flags
+				if (data.trace) { $('#trace').prop('checked', true); }
+				if (data.debug) { $('#debug').prop('checked', true); }
+
+				// Do a merge
+				$('#merge').trigger('click');
+			}
+		});
+	}
 })
