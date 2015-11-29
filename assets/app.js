@@ -92,18 +92,41 @@ $(function () {
 	// turn a multi-document YAML string into a list of
 	// separate document strings.
 	var yamls = function (s) {
+		var n = 1;
+		var docify = function (doc) {
+			file = null;
+			// find the first `# <something>.yml` comment
+			for (var i = 0; i < doc.length; i++) {
+				m = doc[i].match(/^---\s*#\s*(.+\.yml)\s*$/);
+				if (m) {
+					file = m[1];
+					break;
+				}
+				m = doc[i].match(/^\s*#\s*(.+\.yml)\s*$/);
+				if (m) {
+					file = m[1];
+					break;
+				}
+			}
+			if (file == null) {
+				file = "file" + n.toString() + ".yml"
+			}
+			n++;
+			return { filename: file, contents: doc.join("\n") + "\n" };
+		}
+
 		var docs = [];
 		var doc = [];
 		lines = s.split("\n");
-		for (i = 0; i < lines.length; i++) {
-			if (lines[i] == "---" && doc.length > 0) {
-				docs.push(doc.join("\n") + "\n");
+		for (var i = 0; i < lines.length; i++) {
+			if (lines[i].match(/^---/) && doc.length > 0) {
+				docs.push(docify(doc));
 				doc = [];
 			}
 			doc.push(lines[i])
 		}
 		if (doc.length > 0) {
-			docs.push(doc.join("\n") + "\n");
+			docs.push(docify(doc));
 		}
 		return docs;
 	}
