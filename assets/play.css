@@ -124,6 +124,15 @@ div#textarea-wrapper > div#stderr {
 #stderr span.debug-running { color: #f7f; }
 #stderr span span.cont { color: #555; }
 
+div#footer {
+	clear: both;
+	text-align: center;
+	color: #999;
+	font-family: sans-serif;
+	font-size: 8.5pt;
+	padding: 2em 0 0 0;
+}
+
 /* codemirror syntax highlighting for modified version of yaml.js */
 .cm-s-spruce { color: #c7c7c7; background: #000; line-height: 1.15em; }
 
