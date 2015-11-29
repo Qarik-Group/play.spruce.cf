@@ -98,8 +98,8 @@ func SpruceMerge(m Merge) (*Result, error) {
 	args = append(args, "merge")
 
 	if len(m.Prune) > 0 {
-		args = append(args, "--prune")
 		for _, f := range m.Prune {
+			args = append(args, "--prune")
 			args = append(args, f)
 		}
 	}
