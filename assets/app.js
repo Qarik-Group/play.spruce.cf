@@ -155,8 +155,11 @@ $(function () {
 				data = JSON.parse(raw);
 				console.dir(data);
 
-				$('#stdout, #stderr').hide();
+				$('#about, #stdout, #stderr').hide();
 
+				if (data.about != "") {
+					$('#about').html(data.about).show();
+				}
 				if (data.stdout != "") {
 					$('#stdout').html(data.stdout).show();
 				}

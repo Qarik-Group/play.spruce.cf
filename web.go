@@ -36,8 +36,8 @@ func main() {
 			return
 		}
 
-		var params Merge
-		err = json.Unmarshal(all, &params)
+		var m Merge
+		err = json.Unmarshal(all, &m)
 		if err != nil {
 			log.Printf("failed to unmarshal JSON payload: %s", err)
 			log.Printf("bad JSON payload was:\n%s", string(all))
@@ -46,13 +46,13 @@ func main() {
 			return
 		}
 
-		result, err := SpruceMerge(params)
+		result, err := SpruceMerge(m)
 		if err != nil {
 			w.WriteHeader(500)
 			w.Write([]byte("internal server error"))
 			return
 		}
-		m, err := json.Marshal(result)
+		res, err := json.Marshal(result)
 		if err != nil {
 			log.Printf("failed to marshal JSON response: %s", err)
 			w.WriteHeader(500)
@@ -60,7 +60,7 @@ func main() {
 			return
 		}
 		w.WriteHeader(200)
-		w.Write(m)
+		w.Write(res)
 	})
 	panic(http.ListenAndServe(":8081", nil))
 }

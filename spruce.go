@@ -13,6 +13,7 @@ import (
 
 type Result struct {
 	Arguments []string `json:"args"`
+	About     string   `json:"about"`
 	Stdout    string   `json:"stdout"`
 	Stderr    string   `json:"stderr"`
 	Success   bool     `json:"success"`
@@ -33,12 +34,14 @@ func Spruce(where string, args ...string) (*Result, error) {
 		return nil, err
 	}
 
-	err = os.Chdir(where)
-	if err != nil {
-		log.Printf("failed to chdir to %s: %s", where, err)
-		return nil, err
+	if where != "" {
+		err = os.Chdir(where)
+		if err != nil {
+			log.Printf("failed to chdir to %s: %s", where, err)
+			return nil, err
+		}
 	}
-
+	where, _ = os.Getwd()
 	log.Printf("running `spruce %v' in %s", args, where)
 	err = cmd.Start()
 	if err != nil {
@@ -64,14 +67,6 @@ func Spruce(where string, args ...string) (*Result, error) {
 	r.Stdout = <-output
 	r.Stderr = <-errors
 	return r, nil
-}
-
-func SpruceVersion() (string, error) {
-	r, err := Spruce("", "version")
-	if err != nil {
-		return "", err
-	}
-	return r.Stdout, nil
 }
 
 type Merge struct {
@@ -117,5 +112,11 @@ func SpruceMerge(m Merge) (*Result, error) {
 		)
 	}
 
-	return Spruce(dir, args...)
+	result, err := Spruce(dir, args...)
+	if version, err := Spruce("", "-v"); err == nil {
+		result.About = version.Stdout + version.Stderr
+	} else {
+		log.Printf("failed to determine spruce version information: %s", err)
+	}
+	return result, err
 }
