@@ -100,6 +100,29 @@ div#button-wrapper button:hover {
 	color: yellow;
 }
 
+div#textarea-wrapper > div#stdout,
+div#textarea-wrapper > div#stderr {
+	display: none;
+	white-space: pre;
+	font-family: monospace;
+
+	clear: both;
+	padding: 2em;
+	background: #000;
+	color: #fff;
+	margin: 1em 0;
+}
+#stderr > span {
+	display: block;
+}
+#stderr span.trace { color: lightblue; }
+#stderr span.data-flow { color: lime; }
+
+#stderr span.debug { color: inherit; }
+#stderr span.debug-parsing { color: yellow; }
+#stderr span.debug-running { color: #f7f; }
+#stderr span span.cont { color: #555; }
+
 /* codemirror syntax highlighting for modified version of yaml.js */
 .cm-s-spruce { color: #c7c7c7; background: #000; line-height: 1.15em; }
 
