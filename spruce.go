@@ -91,7 +91,7 @@ func SpruceMerge(m Merge) (*Result, error) {
 		log.Printf("failed to create temporary working directory: %s", err)
 		return nil, err
 	}
-	// defer rm() the dir
+	defer os.RemoveAll(dir)
 
 	var args []string
 	if m.Debug {
