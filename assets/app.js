@@ -143,10 +143,11 @@ $(function () {
 	// JSONify the form data entered so far...
 	formdata = function () {
 		return {
-			yaml  : yamls($('#yaml').data('editor').getValue()),
-			debug : $('#debug').is(':checked'),
-			trace : $('#trace').is(':checked'),
-			prune : prune($('#prune').val())
+			flavor : $('[name="flavor"]:checked').val(),
+			yaml   : yamls($('#yaml').data('editor').getValue()),
+			debug  : $('#debug').is(':checked'),
+			trace  : $('#trace').is(':checked'),
+			prune  : prune($('#prune').val())
 		};
 	};
 
@@ -185,6 +186,18 @@ $(function () {
 		});
 	});
 
+	$.ajax({
+		type: 'GET',
+		url:  '/meta',
+		success: function(raw) {
+			data = JSON.parse(raw);
+
+			for (var i = 0; i < data.flavors.length; i++) {
+				$('#flavors').append('<li><input type="radio" value="' + data.flavors[i] + '" name="flavor" /> ' + data.flavors[i] + '</li>');
+			}
+		}
+	});
+
 	if (document.location.hash != "") {
 		key = document.location.hash.replace(/^#/, '')
 		$.ajax({
@@ -206,6 +219,9 @@ $(function () {
 				// Debug / Trace flags
 				if (data.trace) { $('#trace').prop('checked', true); }
 				if (data.debug) { $('#debug').prop('checked', true); }
+
+				// Flavor
+				$('[name=flavor][value="' + data.flavor + '"]').prop('checked', true);
 
 				// Do a merge
 				$('#merge').trigger('click');

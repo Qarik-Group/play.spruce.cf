@@ -82,6 +82,11 @@ div#options-wrapper textarea#prune {
 	padding: 0.5em;
 }
 
+#flavors {
+	list-style: none;
+	padding: 0;
+}
+
 div#button-wrapper {
 	float: left;
 	width: 195px;

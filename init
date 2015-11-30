@@ -1,0 +1,5 @@
+#!/bin/bash
+
+# this is probably not the best way to do this...
+export PATH=$PWD/assets/bin:$PATH
+exec play.spruce.cf

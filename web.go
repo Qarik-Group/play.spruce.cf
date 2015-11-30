@@ -6,6 +6,7 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"strings"
 )
 
 func main() {
@@ -53,6 +54,36 @@ func main() {
 			return
 		}
 		res, err := json.Marshal(result)
+		if err != nil {
+			log.Printf("failed to marshal JSON response: %s", err)
+			w.WriteHeader(500)
+			w.Write([]byte("internal server error"))
+			return
+		}
+		w.WriteHeader(200)
+		w.Write(res)
+	})
+
+	http.HandleFunc("/meta", func(w http.ResponseWriter, r *http.Request) {
+		if r.URL.Path != "/meta" {
+			w.WriteHeader(404)
+			w.Write([]byte("not found"))
+			return
+		}
+
+		if r.Method != "GET" {
+			w.WriteHeader(415)
+			w.Write([]byte("method not supported"))
+			return
+		}
+
+		meta := struct {
+			Flavors []string `json:"flavors"`
+		}{
+			Flavors: strings.Split(os.Getenv("SPRUCE_FLAVORS"), ","),
+		}
+
+		res, err := json.Marshal(meta)
 		if err != nil {
 			log.Printf("failed to marshal JSON response: %s", err)
 			w.WriteHeader(500)
@@ -133,5 +164,5 @@ func main() {
 		}
 	})
 
-	panic(http.ListenAndServe(":8081", nil))
+	panic(http.ListenAndServe(":"+os.Getenv("PORT"), nil))
 }

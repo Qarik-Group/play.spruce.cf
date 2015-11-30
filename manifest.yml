@@ -1,0 +1,9 @@
+---
+applications:
+  - name: play.spruce.cf
+    host: play
+    domain: spruce.cf
+    memory: 128M
+    command: ./init
+    env:
+      SPRUCE_FLAVORS: expr,v0.12.0
