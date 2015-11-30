@@ -79,8 +79,10 @@ func main() {
 
 		meta := struct {
 			Flavors []string `json:"flavors"`
+			Latest  string   `json:"latest"`
 		}{
 			Flavors: strings.Split(os.Getenv("SPRUCE_FLAVORS"), ","),
+			Latest:  os.Getenv("SPRUCE_LATEST"),
 		}
 
 		res, err := json.Marshal(meta)

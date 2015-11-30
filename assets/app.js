@@ -192,6 +192,7 @@ $(function () {
 		success: function(raw) {
 			data = JSON.parse(raw);
 
+			$('#flavors li').append(' (' + data.latest + ')');
 			for (var i = 0; i < data.flavors.length; i++) {
 				$('#flavors').append('<li><input type="radio" value="' + data.flavors[i] + '" name="flavor" /> ' + data.flavors[i] + '</li>');
 			}
