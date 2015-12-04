@@ -6,5 +6,5 @@ applications:
     memory: 128M
     command: ./init
     env:
-      SPRUCE_LATEST:  f828349
+      SPRUCE_LATEST:  718b0ba
       SPRUCE_FLAVORS: v0.12.0
