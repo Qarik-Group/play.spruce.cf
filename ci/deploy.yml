@@ -1,0 +1,46 @@
+---
+
+resources:
+  - name: play.spruce.cf.git
+    type: git
+    source:
+      uri: https://github.com/filefrog/play.spruce.cf.git
+      branch: pipeline
+
+  - name: spruce.git
+    type: git
+    source:
+      uri: https://github.com/geofffranks/spruce.git
+      branch: master
+
+jobs:
+  - name: deploy
+    public: true
+    serial: true
+    plan:
+      - do:
+        - aggregate:
+            # git clone the play.spruce.cf repository from Github
+          - get: play.spruce.cf
+            resource: play.spruce.cf.git
+            trigger: true
+
+            # git clone the spruce repository from Github
+          - get: spruce
+            resource: spruce.git
+            trigger: true
+
+          # deploy play.spruce.cf using ci/redeploy
+        - task: deploy
+          config:
+            platform: linux
+            image: (( concat "docker:///" meta.docker.image ))
+            inputs:
+              - name: play.spruce.cf
+                path: play.spruce.cf/
+              - name: spruce
+                path: spruce/
+            run:
+              path: ./play.spruce.cf/ci/redeploy
+              args:
+                - v0.12.0

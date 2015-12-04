@@ -1,65 +1,87 @@
----
-#
-# play.spruce.cf Concourse Pipeline
-#
-# This pipeline will re-deploy the play.spruce.cf web application to
-# Pivotal CloudFoundry (hosted PaaS) whenever something "interesting"
-# happens.  Current events of interest are:
-#
-#  - New commits on origin/master for play.spruce.cf GH repo
-#  - New commits on origin/master for spruce GH repo
-#  - New versioned releases of spruce
-#
-
 groups:
-  - name: deploy
-    jobs:
-      - deploy
-
-
-resources:
-  - name: play.spruce.cf.git
-    type: git
-    source:
-      uri: https://github.com/filefrog/play.spruce.cf.git
-      branch: pipeline
-
-  - name: spruce.git
-    type: git
-    source:
-      uri: https://github.com/geofffranks/spruce.git
-      branch: master
-
+- jobs:
+  - deploy
+  name: deploy
+- jobs:
+  - docker
+  name: image
 jobs:
-  - name: deploy
-    public: true
-    serial: true
-    plan:
-      - do:
-        - aggregate:
-            # git clone the play.spruce.cf repository from Github
-          - get: play.spruce.cf
-            resource: play.spruce.cf.git
-            trigger: true
-
-            # git clone the spruce repository from Github
-          - get: spruce
-            resource: spruce.git
-            trigger: true
-
-          # deploy play.spruce.cf using ci/redeploy
-        - task: deploy
-          config:
-            platform: linux
-            image: docker:///ubuntu#14.04
-            inputs:
-              - name: play.spruce.cf
-                path: play.spruce.cf/
-              - name: spruce
-                path: spruce/
-            run:
-              path: ./play.spruce.cf/ci/redeploy
-              args:
-                - v0.12.0
-
+- name: docker
+  plan:
+  - get: recipe
+    resource: docker-recipe
+    trigger: true
+  - get: cf-cli
+    trigger: true
+  - config:
+      image: docker:///busybox
+      inputs:
+      - name: recipe
+        path: .
+      - name: cf-cli
+        path: recipe/ci/image/cf-cli
+      platform: linux
+      run:
+        path: echo
+    task: combine
+  - params:
+      build: combine/recipe/ci/image
+    put: docker-image
+  public: true
+  serial: true
+- name: deploy
+  plan:
+  - do:
+    - aggregate:
+      - get: play.spruce.cf
+        resource: play.spruce.cf.git
+        trigger: true
+      - get: spruce
+        resource: spruce.git
+        trigger: true
+    - config:
+        image: docker:///clutteredraisins/play.spruce.cf-pipeline
+        inputs:
+        - name: play.spruce.cf
+          path: play.spruce.cf/
+        - name: spruce
+          path: spruce/
+        platform: linux
+        run:
+          args:
+          - v0.12.0
+          path: ./play.spruce.cf/ci/redeploy
+      task: deploy
+  public: true
+  serial: true
+resources:
+- name: docker-recipe
+  source:
+    branch: pipeline
+    paths:
+    - ci/image/*
+    uri: https://github.com/filefrog/play.spruce.cf.git
+  type: git
+- name: cf-cli
+  source:
+    bucket: go-cli
+    regexp: releases/v(.*)/cf-linux-amd64.tgz
+  type: s3
+- name: docker-image
+  source:
+    email: {{docker-hub-email}}
+    password: {{docker-hub-password}}
+    repository: clutteredraisins/play.spruce.cf-pipeline
+    username: {{docker-hub-username}}
+  type: docker-image
+- name: play.spruce.cf.git
+  source:
+    branch: pipeline
+    uri: https://github.com/filefrog/play.spruce.cf.git
+  type: git
+- name: spruce.git
+  source:
+    branch: master
+    uri: https://github.com/geofffranks/spruce.git
+  type: git
 

@@ -1,0 +1,21 @@
+---
+#
+# play.spruce.cf Concourse Pipeline
+#
+# This pipeline will re-deploy the play.spruce.cf web application to
+# Pivotal CloudFoundry (hosted PaaS) whenever something "interesting"
+# happens.  Current events of interest are:
+#
+#  - New commits on origin/master for play.spruce.cf GH repo
+#  - New commits on origin/master for spruce GH repo
+#  - New versioned releases of spruce
+#
+
+groups:
+  - name: deploy
+    jobs:
+      - deploy
+
+  - name: image
+    jobs:
+      - docker

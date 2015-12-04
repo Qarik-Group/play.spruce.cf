@@ -1,0 +1,58 @@
+---
+# docker
+meta:
+  docker:
+    image: clutteredraisins/play.spruce.cf-pipeline
+
+resources:
+  - name: docker-recipe
+    type: git
+    source:
+      uri: https://github.com/filefrog/play.spruce.cf.git
+      branch: pipeline
+      paths: [ci/image/*]
+
+  - name: cf-cli
+    type: s3
+    source:
+      bucket: go-cli
+      regexp: releases/v(.*)/cf-linux-amd64.tgz
+
+  - name: docker-image
+    type: docker-image
+    source:
+      email:      {{docker-hub-email}}
+      username:   {{docker-hub-username}}
+      password:   {{docker-hub-password}}
+      repository: (( grab meta.docker.image ))
+
+jobs:
+  - name: docker
+    public: true
+    serial: true
+    plan:
+        # if the Dockerfile changes....
+      - get: recipe
+        resource: docker-recipe
+        trigger: true
+
+        # if a new version of the CloudFoundry CLI is relaeased...
+      - get: cf-cli
+        trigger: true
+
+      - task: combine
+        config:
+          platform: linux
+          image: docker:///busybox
+          inputs:
+            - { name: recipe, path: . }
+            - { name: cf-cli, path: recipe/ci/image/cf-cli }
+
+          # `run' is required, but not necessary for this
+          # (since we only care about getting the inputs where they need
+          #  to be so that the next `put' task can build the Docker image)
+          run: { path: echo }
+
+      - put: docker-image
+        params:
+          build: combine/recipe/ci/image
