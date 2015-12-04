@@ -54,13 +54,12 @@ jobs:
             image: docker:///ubuntu#14.04
             inputs:
               - name: play.spruce.cf
-                path: .
+                path: play.spruce.cf/
               - name: spruce
                 path: spruce/
             run:
-              { path: 'ls', args: ['-lh'] }
-              #path: ./ci/redeploy
-              #args:
-              #  - v0.12.0
+              path: ./play.spruce.cf/ci/redeploy
+              args:
+                - v0.12.0
 
 

@@ -1,6 +1,9 @@
 #!/bin/bash
 
-echo "oh hai, you forgot to implement the redeploy script!"
+root=$(cd $(dirname $BASH_SOURCE[0])/../.. && pwd)
+echo "Spruce should be at ${root}/spruce"
+echo "Play should be at ${root}/play.spruce.cf"
 
-ls -lh
-ls -lh *
+ls -lh ${root}
+
+echo "oh hai, you forgot to implement the redeploy script!"
