@@ -1,0 +1,6 @@
+#!/bin/bash
+
+echo "oh hai, you forgot to implement the redeploy script!"
+
+ls -lh
+ls -lh *

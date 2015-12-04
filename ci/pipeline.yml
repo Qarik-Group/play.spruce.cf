@@ -1,0 +1,66 @@
+---
+#
+# play.spruce.cf Concourse Pipeline
+#
+# This pipeline will re-deploy the play.spruce.cf web application to
+# Pivotal CloudFoundry (hosted PaaS) whenever something "interesting"
+# happens.  Current events of interest are:
+#
+#  - New commits on origin/master for play.spruce.cf GH repo
+#  - New commits on origin/master for spruce GH repo
+#  - New versioned releases of spruce
+#
+
+groups:
+  - name: deploy
+    jobs:
+      - deploy
+
+
+resources:
+  - name: play.spruce.cf.git
+    type: git
+    source:
+      uri: https://github.com/filefrog/play.spruce.cf.git
+      branch: pipeline
+
+  - name: spruce.git
+    type: git
+    source:
+      uri: https://github.com/geofffranks/spruce.git
+      branch: master
+
+jobs:
+  - name: deploy
+    public: true
+    serial: true
+    plan:
+      - do:
+        - aggregate:
+            # git clone the play.spruce.cf repository from Github
+          - get: play.spruce.cf
+            resource: play.spruce.cf.git
+            trigger: true
+
+            # git clone the spruce repository from Github
+          - get: spruce
+            resource: spruce.git
+            trigger: true
+
+          # deploy play.spruce.cf using ci/redeploy
+        - task: deploy
+          config:
+            platform: linux
+            image: docker:///ubuntu#14.04
+            inputs:
+              - name: play.spruce.cf
+                path: .
+              - name: spruce
+                path: spruce/
+            run:
+              { path: 'ls', args: ['-lh'] }
+              #path: ./ci/redeploy
+              #args:
+              #  - v0.12.0
+
+
