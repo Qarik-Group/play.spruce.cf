@@ -1,9 +1,34 @@
 #!/bin/bash
 
 root=$(cd $(dirname $BASH_SOURCE[0])/../.. && pwd)
-echo "Spruce should be at ${root}/spruce"
-echo "Play should be at ${root}/play.spruce.cf"
+echo "Working in ${root}"
+echo "  spruce:         ${root}/spruce"
+echo "  play.spruce.cf: ${root}/play.spruce.cf"
+echo
+echo
 
-ls -lh ${root}
+
+bins=${root}/play.spruce.cf/assets/bin
+
+echo "building spruce master (latest)"
+cd ${root}/spruce
+go build
+ls -l spruce
+cp spruce ${bins}/spruce
+echo
+echo
+echo
+
+for flavor in "${@}"; do
+  echo "building spruce ${flavor}"
+  git checkout ${flavor}
+  go build
+  cp spruce ${bins}/spruce-${flavor}
+  echo
+  echo
+  echo
+done
+
+ls -lh ${bins}
 
 echo "oh hai, you forgot to implement the redeploy script!"
