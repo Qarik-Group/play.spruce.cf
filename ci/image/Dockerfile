@@ -16,6 +16,3 @@ ENV GOPATH /gopath
 ENV PATH $GOROOT/bin:$GOPATH/bin:$PATH
 
 RUN go get github.com/tools/godep
-
-# Install the cf-cli, which may have been updated by Concourse
-ADD cf-cli/cf-linux-amd64.tgz /usr/bin/

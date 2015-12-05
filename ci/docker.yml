@@ -12,11 +12,11 @@ resources:
       branch: pipeline
       paths: [ci/image/*]
 
-  - name: cf-cli
-    type: s3
-    source:
-      bucket: go-cli
-      regexp: releases/v(.*)/cf-linux-amd64.tgz
+#  - name: cf-cli
+#    type: s3
+#    source:
+#      bucket: go-cli
+#      regexp: releases/v(.*)/cf-linux-amd64.tgz
 
   - name: docker-image
     type: docker-image
@@ -37,8 +37,8 @@ jobs:
         trigger: true
 
         # if a new version of the CloudFoundry CLI is relaeased...
-      - get: cf-cli
-        trigger: true
+      #- get: cf-cli
+      #  trigger: true
 
       - task: combine
         config:
@@ -46,7 +46,7 @@ jobs:
           image: docker:///busybox
           inputs:
             - { name: recipe, path: . }
-            - { name: cf-cli, path: recipe/ci/image/cf-cli }
+            #- { name: cf-cli, path: ./ci/image/cf-cli }
 
           # `run' is required, but not necessary for this
           # (since we only care about getting the inputs where they need

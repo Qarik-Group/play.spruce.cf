@@ -11,15 +11,11 @@ jobs:
   - get: recipe
     resource: docker-recipe
     trigger: true
-  - get: cf-cli
-    trigger: true
   - config:
       image: docker:///busybox
       inputs:
       - name: recipe
         path: .
-      - name: cf-cli
-        path: recipe/ci/image/cf-cli
       platform: linux
       run:
         path: echo
@@ -62,11 +58,6 @@ resources:
     - ci/image/*
     uri: https://github.com/filefrog/play.spruce.cf.git
   type: git
-- name: cf-cli
-  source:
-    bucket: go-cli
-    regexp: releases/v(.*)/cf-linux-amd64.tgz
-  type: s3
 - name: docker-image
   source:
     email: {{docker-hub-email}}
