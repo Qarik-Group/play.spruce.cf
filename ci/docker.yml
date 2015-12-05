@@ -55,4 +55,4 @@ jobs:
 
       - put: docker-image
         params:
-          build: combine/recipe/ci/image
+          build: combine/ci/image

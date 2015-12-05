@@ -21,7 +21,7 @@ jobs:
         path: echo
     task: combine
   - params:
-      build: combine/recipe/ci/image
+      build: combine/ci/image
     put: docker-image
   public: true
   serial: true
