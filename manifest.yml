@@ -4,7 +4,4 @@ applications:
     host: play
     domain: spruce.cf
     memory: 128M
-    command: ./init
-    env:
-      SPRUCE_LATEST:  718b0ba
-      SPRUCE_FLAVORS: v0.12.0
+    command: ./play.spruce.cf

@@ -2,12 +2,24 @@ package main
 
 import (
 	"encoding/json"
+	"fmt"
 	"io/ioutil"
 	"log"
 	"net/http"
 	"os"
-	"strings"
 )
+
+var (
+	Spruces []string
+)
+
+func init() {
+	l, err := GetSpruces()
+	if err != nil {
+		panic(fmt.Sprintf("init failed: %s", err))
+	}
+	Spruces = l
+}
 
 func main() {
 	root, err := os.Getwd()
@@ -76,13 +88,10 @@ func main() {
 			w.Write([]byte("method not supported"))
 			return
 		}
-
 		meta := struct {
 			Flavors []string `json:"flavors"`
-			Latest  string   `json:"latest"`
 		}{
-			Flavors: strings.Split(os.Getenv("SPRUCE_FLAVORS"), ","),
-			Latest:  os.Getenv("SPRUCE_LATEST"),
+			Flavors: Spruces,
 		}
 
 		res, err := json.Marshal(meta)
@@ -166,5 +175,10 @@ func main() {
 		}
 	})
 
-	panic(http.ListenAndServe(":"+os.Getenv("PORT"), nil))
+	port := os.Getenv("PORT")
+	if port == "" {
+		port = "8080"
+	}
+	log.Printf("listening on :%s\n", port)
+	panic(http.ListenAndServe(":"+port, nil))
 }

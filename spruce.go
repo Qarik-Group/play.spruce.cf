@@ -9,6 +9,8 @@ import (
 	"os"
 	"os/exec"
 	"strings"
+
+	"github.com/jhunt/play.spruce.cf/github"
 )
 
 type Result struct {
@@ -19,13 +21,29 @@ type Result struct {
 	Success   bool     `json:"success"`
 }
 
+func GetSpruces() ([]string, error) {
+	r, err := github.Releases("geofffranks", "spruce")
+	if err != nil {
+		return nil, fmt.Errorf("github api: %s", err)
+	}
+	l := github.LatestFrom("1.0.2", r)
+	for _, v := range l {
+		f, err := os.Create(fmt.Sprintf("/tmp/spruce-%s", v))
+		log.Printf("downloading spruce v%s", v)
+		if err != nil {
+			return nil, fmt.Errorf("failed to download spruce v%s: %s", v, err)
+		}
+		github.Download("geofffranks", "spruce", v, f)
+		f.Chmod(0755)
+		f.Close()
+	}
+	return l, nil
+}
+
 func Spruce(where string, flavor string, args ...string) (*Result, error) {
 	r := &Result{Arguments: args}
 
-	spruce := "spruce"
-	if flavor != "" {
-		spruce = "spruce-" + flavor
-	}
+	spruce := fmt.Sprintf("/tmp/spruce-%s", flavor)
 	cmd := exec.Command(spruce, args...)
 	stdout, err := cmd.StdoutPipe()
 	if err != nil {

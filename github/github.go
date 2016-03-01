@@ -1,13 +1,14 @@
 package github
 
 import (
-	"io"
+	"runtime"
 	"encoding/json"
 	"fmt"
+	"io"
 	"io/ioutil"
 	"net/http"
-	"strings"
 	"regexp"
+	"strings"
 )
 
 var (
@@ -32,7 +33,7 @@ func Releases(owner, repo string) ([]string, error) {
 		return nil, err
 	}
 
-	var data []struct { Name string }
+	var data []struct{ Name string }
 	err = json.Unmarshal(b, &data)
 	if err != nil {
 		return nil, err
@@ -82,7 +83,7 @@ func LatestFrom(from string, versions []string) []string {
 }
 
 func Download(owner, repo, version string, out io.Writer) error {
-	r, err := http.Get(fmt.Sprintf("https://github.com/%s/%s/releases/download/v%s/spruce-linux-amd64", owner, repo, version))
+	r, err := http.Get(fmt.Sprintf("https://github.com/%s/%s/releases/download/v%s/spruce-%s-%s", owner, repo, version, runtime.GOOS, runtime.GOARCH))
 	if err != nil {
 		return err
 	}

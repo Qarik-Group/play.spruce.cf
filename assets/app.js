@@ -192,10 +192,11 @@ $(function () {
 		success: function(raw) {
 			data = JSON.parse(raw);
 
-			$('#flavors li').append(' (' + data.latest + ')');
+			$('#flavors').append('<li><input type="radio" value="' + data.flavors[0] + '" name="flavor" /> latest (' + data.flavors[0] + ')</li>');
 			for (var i = 0; i < data.flavors.length; i++) {
 				$('#flavors').append('<li><input type="radio" value="' + data.flavors[i] + '" name="flavor" /> ' + data.flavors[i] + '</li>');
 			}
+			$('#flavors li:first-child input').prop('checked', true);
 		}
 	});
 

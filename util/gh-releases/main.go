@@ -1,9 +1,9 @@
 package main
 
 import (
-	"os"
 	"fmt"
 	"github.com/jhunt/play.spruce.cf/github"
+	"os"
 )
 
 func usage() {
@@ -20,7 +20,8 @@ func main() {
 	switch os.Args[1] {
 	case "list":
 	case "download":
-	default: usage()
+	default:
+		usage()
 	}
 	if len(os.Args) > 2 {
 		owner = os.Args[2]
