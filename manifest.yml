@@ -4,4 +4,4 @@ applications:
     host: play
     domain: spruce.cf
     memory: 128M
-    command: ./play.spruce.cf
+    command: play.spruce.cf
