@@ -1,5 +1,5 @@
 {
-	"ImportPath": "github.com/filefrog/play.spruce.cf",
+	"ImportPath": "github.com/jhunt/play.spruce.cf",
 	"GoVersion": "go1.5",
 	"Deps": []
 }
