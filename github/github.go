@@ -1,13 +1,14 @@
 package github
 
 import (
-	"runtime"
 	"encoding/json"
 	"fmt"
+	"github.com/jhunt/play.spruce.cf/client"
 	"io"
 	"io/ioutil"
 	"net/http"
 	"regexp"
+	"runtime"
 	"strings"
 )
 
@@ -20,7 +21,8 @@ func init() {
 }
 
 func Releases(owner, repo string) ([]string, error) {
-	r, err := http.Get(fmt.Sprintf("https://api.github.com/repos/%s/%s/tags", owner, repo))
+	c := client.New()
+	r, err := c.Get(fmt.Sprintf("https://api.github.com/repos/%s/%s/tags", owner, repo))
 	if err != nil {
 		return nil, err
 	}
@@ -83,6 +85,7 @@ func LatestFrom(from string, versions []string) []string {
 }
 
 func Download(owner, repo, version string, out io.Writer) error {
+	// use default http client always for downloading, as it sends to S3, and S3 doesn't like the Auth Headers.. plus this isn't rate-limited?
 	r, err := http.Get(fmt.Sprintf("https://github.com/%s/%s/releases/download/v%s/spruce-%s-%s", owner, repo, version, runtime.GOOS, runtime.GOARCH))
 	if err != nil {
 		return err
