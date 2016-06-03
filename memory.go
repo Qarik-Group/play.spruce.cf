@@ -3,6 +3,7 @@ package main
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/jhunt/play.spruce.cf/client"
 	"io/ioutil"
 	"log"
 	"net/http"
@@ -47,11 +48,12 @@ func Store(m *Merge) (string, error) {
 		return "", err
 	}
 	body := strings.NewReader(string(encoded))
-	resp, err := http.Post("https://api.github.com/gists", "application/json", body)
+	c := client.New()
+	resp, err := c.Post("https://api.github.com/gists", "application/json", body)
+	log.Printf("got a response: %v", resp)
 	if err != nil {
 		return "", err
 	}
-	log.Printf("got a response: %v", resp)
 	if resp.StatusCode != 201 {
 		return "", fmt.Errorf("failed to create gist: API returned %s", resp.Status)
 	}
@@ -64,7 +66,8 @@ func Store(m *Merge) (string, error) {
 }
 
 func Retrieve(key string) (*Merge, error) {
-	resp, err := http.Get(fmt.Sprintf("https://api.github.com/gists/%s", key))
+	c := client.New()
+	resp, err := c.Get(fmt.Sprintf("https://api.github.com/gists/%s", key))
 	if err != nil {
 		return nil, err
 	}

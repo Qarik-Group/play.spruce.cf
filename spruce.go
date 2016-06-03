@@ -29,11 +29,14 @@ func GetSpruces() ([]string, error) {
 	l := github.LatestFrom("1.0.2", r)
 	for _, v := range l {
 		f, err := os.Create(fmt.Sprintf("/tmp/spruce-%s", v))
-		log.Printf("downloading spruce v%s", v)
 		if err != nil {
-			return nil, fmt.Errorf("failed to download spruce v%s: %s", v, err)
+			return nil, fmt.Errorf("failed to save spruce v%s: %s", v, err)
 		}
-		github.Download("geofffranks", "spruce", v, f)
+		log.Printf("downloading spruce v%s", v)
+		err = github.Download("geofffranks", "spruce", v, f)
+		if err != nil {
+			return nil, fmt.Errorf("failed to save spruce v%s: %s", v, err)
+		}
 		f.Chmod(0755)
 		f.Close()
 	}
