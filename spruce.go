@@ -45,6 +45,9 @@ func Spruce(where string, flavor string, args ...string) (*Result, error) {
 
 	spruce := fmt.Sprintf("/tmp/spruce-%s", flavor)
 	cmd := exec.Command(spruce, args...)
+	cmd.Env = []string{
+		"REDACT=Redact Vault Creds",
+	}
 	stdout, err := cmd.StdoutPipe()
 	if err != nil {
 		log.Printf("failed to get stdout pipe from command: %s", err)
