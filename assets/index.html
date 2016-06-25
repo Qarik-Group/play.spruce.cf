@@ -51,6 +51,12 @@ networks:
 				<label for="debug"><input type="checkbox" id="debug" /> Debugging</label>
 				<label for="trace"><input type="checkbox" id="trace" /> Trace</label>
 
+				<h3 class="env">Environment</h3>
+				<textarea id="env" name="env"># VAR=value...
+HOME=/home/user
+
+</textarea>
+
 				<h3 class="prune">Prune</h3>
 				<textarea id="prune" name="prune"># one per line...
 meta
@@ -69,7 +75,7 @@ meta
 		</form>
 	</div>
 
-	<div id="footer">Copyright &copy; 2015 James Hunt</div>
+	<div id="footer">Copyright &copy; 2016 James Hunt</div>
 
 	<script type="text/javascript" src="jquery.js"></script>
 	<script type="text/javascript" src="codemirror.js"></script>

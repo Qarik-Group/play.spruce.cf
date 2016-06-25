@@ -75,9 +75,9 @@ $(function () {
 		return out.join("");
 	}
 
-	// turn a prune list (text) into a list of parsed keys
+	// turn a textarea into a list of parsed keys
 	// (ignoring comments and blank lines).
-	var prune = function (s) {
+	var text_to_list = function (s) {
 		var keys = [];
 		lines = s.split("\n");
 		for (i = 0; i < lines.length; i++) {
@@ -147,7 +147,8 @@ $(function () {
 			yaml   : yamls($('#yaml').data('editor').getValue()),
 			debug  : $('#debug').is(':checked'),
 			trace  : $('#trace').is(':checked'),
-			prune  : prune($('#prune').val())
+			prune  : text_to_list($('#prune').val()),
+			env    : text_to_list($('#env').val())
 		};
 	};
 
@@ -210,6 +211,8 @@ $(function () {
 
 				// keys to prune
 				$('#prune').val("# one per line\n" + data.prune.join("\n") + "\n");
+				// environment variables
+				$('#env').val("# VAR=value\n" + data.env.join("\n") + "\n");
 
 				// YAML document(s)
 				var yaml = "";

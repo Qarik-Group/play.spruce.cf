@@ -43,14 +43,16 @@ func GetSpruces() ([]string, error) {
 	return l, nil
 }
 
-func Spruce(where string, flavor string, args ...string) (*Result, error) {
+func Spruce(where string, flavor string, env []string, args ...string) (*Result, error) {
 	r := &Result{Arguments: args}
 
 	spruce := fmt.Sprintf("/tmp/spruce-%s", flavor)
 	cmd := exec.Command(spruce, args...)
-	cmd.Env = []string{
-		"REDACT=Redact Vault Creds",
+	cmd.Env = env
+	if env == nil {
+		cmd.Env = []string{}
 	}
+	cmd.Env = append(cmd.Env, "REDACT=yes")
 	stdout, err := cmd.StdoutPipe()
 	if err != nil {
 		log.Printf("failed to get stdout pipe from command: %s", err)
@@ -100,6 +102,7 @@ func Spruce(where string, flavor string, args ...string) (*Result, error) {
 type Merge struct {
 	Flavor string   `json:"flavor"`
 	Prune  []string `json:"prune"`
+	Env    []string `json:"env"`
 	YAML   []struct {
 		Filename string `json:"filename"`
 		Contents string `json:"contents"`
@@ -141,8 +144,8 @@ func SpruceMerge(m Merge) (*Result, error) {
 		)
 	}
 
-	result, err := Spruce(dir, m.Flavor, args...)
-	if version, err := Spruce("", m.Flavor, "-v"); err == nil {
+	result, err := Spruce(dir, m.Flavor, m.Env, args...)
+	if version, err := Spruce("", m.Flavor, nil, "-v"); err == nil {
 		result.About = version.Stdout + version.Stderr
 	} else {
 		log.Printf("failed to determine spruce version information: %s", err)
