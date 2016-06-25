@@ -168,8 +168,19 @@ $(function () {
 				$('#about, #stdout, #stderr').hide();
 
 				if (data.about  != "") { $('#about').html(data.about).show(); }
-				if (data.stdout != "") { $('#stdout').html(data.stdout).show(); }
 				if (data.stderr != "") { $('#stderr').html(colorize(data.stderr)).show(); }
+				if (data.stdout != "") {
+					$('#stdout').html('<textarea class="yaml code">'+data.stdout+'</textarea>')
+					            .show();
+					$('#stdout .yaml.code').each(function (i, textarea) {
+						$(textarea).data('editor',
+							CodeMirror.fromTextArea(textarea, {
+								readOnly    : true, /* crucial! */
+								theme       : 'spruce',
+								lineNumbers : true
+							}));
+					});
+				}
 			}
 		});
 	});
