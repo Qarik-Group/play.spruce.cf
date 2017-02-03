@@ -2,7 +2,9 @@
 applications:
   - name: play.spruce.cf
     host: play
-    domain: spruce.cf
+    domains:
+    - spruce.cf
+    - spruce.pro
     memory: 64M
     instances: 2
     command: play.spruce.cf
