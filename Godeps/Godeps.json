@@ -1,6 +1,6 @@
 {
 	"ImportPath": "github.com/jhunt/play.spruce.cf",
-	"GoVersion": "go1.5",
+	"GoVersion": "go1.8",
 	"Packages": [
 		"./..."
 	],
