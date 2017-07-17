@@ -143,12 +143,17 @@ $(function () {
 	// JSONify the form data entered so far...
 	formdata = function () {
 		return {
-			flavor : $('[name="flavor"]:checked').val(),
-			yaml   : yamls($('#yaml').data('editor').getValue()),
-			debug  : $('#debug').is(':checked'),
-			trace  : $('#trace').is(':checked'),
-			prune  : text_to_list($('#prune').val()),
-			env    : text_to_list($('#env').val())
+			flavor          : $('[name="flavor"]:checked').val(),
+			yaml            : yamls($('#yaml').data('editor').getValue()),
+			debug           : $('#debug').is(':checked'),
+			trace           : $('#trace').is(':checked'),
+			fallback_append : $('#fallback-append').is(':checked'),
+			skip_eval       : $('#skip-eval').is(':checked'),
+			go_patch        : $('#go-patch').is(':checked'),
+			prune           : text_to_list($('#prune').val()),
+			env             : text_to_list($('#env').val()),
+			cherry_pick     : text_to_list($('#cherry-pick').val()),
+
 		};
 	};
 

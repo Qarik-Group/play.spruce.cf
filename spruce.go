@@ -100,16 +100,21 @@ func Spruce(where string, flavor string, env []string, args ...string) (*Result,
 }
 
 type Merge struct {
-	Flavor string   `json:"flavor"`
-	Prune  []string `json:"prune"`
-	Env    []string `json:"env"`
-	YAML   []struct {
+	Flavor     string   `json:"flavor"`
+	Prune      []string `json:"prune"`
+	Env        []string `json:"env"`
+	CherryPick []string `json:"cherry_pick"`
+
+	YAML []struct {
 		Filename string `json:"filename"`
 		Contents string `json:"contents"`
 	} `json:"yaml"`
 
-	Debug bool `json:"debug"`
-	Trace bool `json:"trace"`
+	SkipEval       bool `json:"skip_eval"`
+	FallbackAppend bool `json:"fallback_append"`
+	GoPatch        bool `json:"go_patch"`
+	Debug          bool `json:"debug"`
+	Trace          bool `json:"trace"`
 }
 
 func SpruceMerge(m Merge) (*Result, error) {
@@ -128,13 +133,25 @@ func SpruceMerge(m Merge) (*Result, error) {
 		args = append(args, "--trace")
 	}
 	args = append(args, "merge")
-
-	if len(m.Prune) > 0 {
-		for _, f := range m.Prune {
-			args = append(args, "--prune")
-			args = append(args, f)
-		}
+	if m.SkipEval {
+		args = append(args, "--skip-eval")
 	}
+	if m.FallbackAppend {
+		args = append(args, "--fallback-append")
+	}
+	if m.GoPatch {
+		args = append(args, "--go-patch")
+	}
+
+	for _, f := range m.Prune {
+		args = append(args, "--prune")
+		args = append(args, f)
+	}
+
+	for _, cp := range m.CherryPick {
+		args = append(args, "--cherry-pick", cp)
+	}
+
 	for _, y := range m.YAML {
 		args = append(args, y.Filename)
 		ioutil.WriteFile(

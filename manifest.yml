@@ -8,3 +8,4 @@ applications:
     memory: 64M
     instances: 2
     command: play.spruce.cf
+    buildpack: go_buildpack

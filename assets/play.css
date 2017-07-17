@@ -72,6 +72,7 @@ div#options-wrapper label + h3 {
 	margin-top: 2em;
 }
 
+div#options-wrapper textarea#cherry-pick,
 div#options-wrapper textarea#prune,
 div#options-wrapper textarea#env {
 	background-color: #eee;

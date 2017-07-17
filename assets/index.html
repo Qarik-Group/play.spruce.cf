@@ -50,11 +50,18 @@ networks:
 				<h3 class="enable">Enable</h3>
 				<label for="debug"><input type="checkbox" id="debug" /> Debugging</label>
 				<label for="trace"><input type="checkbox" id="trace" /> Trace</label>
+				<label for="trace"><input type="checkbox" id="fallback-append" /> Fallback Append</label>
+				<label for="trace"><input type="checkbox" id="skip-eval" /> Skip Eval</label>
+				<label for="trace"><input type="checkbox" id="go-patch" /> Go-Patch Support</label>
 
 				<h3 class="env">Environment</h3>
 				<textarea id="env" name="env"># VAR=value...
 HOME=/home/user
 
+</textarea>
+
+				<h3 class="cherry-pick">Cherry Pick</h3>
+				<textarea id="cherry-pick" name="cherry-pick"># one per line...
 </textarea>
 
 				<h3 class="prune">Prune</h3>
