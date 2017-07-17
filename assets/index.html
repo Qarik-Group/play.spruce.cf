@@ -13,31 +13,36 @@
 			<div id="textarea-wrapper" spellcheck="false">
 				<h2>Spruce!</h2>
 				<div>
-					<textarea id="yaml" name="yaml" class="yaml code">--- # jobs.yml
-jobs:
-- name: staticIP_z1
-  instances: 3
-  networks:
-  - name: net1
-    static_ips: (( static_ips(0, 2, 4) ))
-- name: api_z1
-  instances: 3
-  networks:
-  - name: net1
-    static_ips: (( static_ips(1, 3, 5) ))
+					<textarea id="yaml" name="yaml" class="yaml code">--- # mjolnir.yml
+meta:
+  env: prod
 
---- # properties.yml
-properties:
-  staticIP_servers: (( grab jobs.staticIP_z1.networks.net1.static_ips ))
-  api_servers: (( grab jobs.api_z1.networks.net1.static_ips ))
+clusters:
+- name: mjolnir
+  servers:
+  - 10.0.1.1
+  - 10.0.1.2
+  env: (( grab meta.env ))
+  instances: 2
 
---- # networks.yml
-networks:
-- name: net1
-  subnets:
-  - cloud_properties: random
-    static:
-    - 192.168.0.2 - 192.168.0.10
+--- # hammer
+clusters:
+- name: hammer
+  env: (( grab meta.env ))
+  servers:
+  - 10.1.1.1
+  - 10.1.1.2
+  - 10.1.1.3
+  instances: 3
+
+--- # final
+site_list:
+- (( concat "mjolnir-" clusters.mjolnir.env ))
+- (( concat "hammer-" clusters.hammer.env ))
+
+sites: (( join "," site_list ))
+
+footprint: (( calc "(clusters.mjolnir.instances + clusters.hammer.instances) * 2048" ))
 </textarea>
 				</div>
 
