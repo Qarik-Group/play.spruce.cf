@@ -229,6 +229,8 @@ $(function () {
 				$('#prune').val("# one per line\n" + data.prune.join("\n") + "\n");
 				// environment variables
 				$('#env').val("# VAR=value\n" + data.env.join("\n") + "\n");
+				// cherry-picks
+				$('#cherry-pick').val("# one per line\n" + data.cherry_pick.join("\n") + "\n");
 
 				// YAML document(s)
 				var yaml = "";
@@ -237,9 +239,12 @@ $(function () {
 				}
 				$('#yaml').data('editor').setValue(yaml);
 
-				// Debug / Trace flags
-				if (data.trace) { $('#trace').prop('checked', true); }
-				if (data.debug) { $('#debug').prop('checked', true); }
+				// Debug / Trace / go-patch/ skip-eval/ fallback-append flags
+				if (data.trace)           { $('#trace').prop('checked', true); }
+				if (data.debug)           { $('#debug').prop('checked', true); }
+				if (data.go_patch)        { $('#go-patch').prop('checked', true); }
+				if (data.skip_eval)       { $('#skip-eval').prop('checked', true); }
+				if (data.fallback_append) { $('#fallback-append').prop('checked', true); }
 
 				// Flavor
 				$('[name=flavor][value="' + data.flavor + '"]').prop('checked', true);
