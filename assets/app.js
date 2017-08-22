@@ -224,6 +224,9 @@ $(function () {
 			url:  '/mem?k=' + key,
 			success: function(raw) {
 				data = JSON.parse(raw);
+				data.prune       = data.prune == null ? [] : data.prune;
+				data.env         = data.env == null ? [] : data.env;
+				data.cherry_pick = data.cherry_pick == null ? [] : data.cherry_pick;
 
 				// keys to prune
 				$('#prune').val("# one per line\n" + data.prune.join("\n") + "\n");
