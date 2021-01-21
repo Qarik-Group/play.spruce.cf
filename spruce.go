@@ -21,13 +21,18 @@ type Result struct {
 	Success   bool     `json:"success"`
 }
 
-func GetSpruces() ([]string, error) {
+func GetSpruces(max int) ([]string, error) {
 	r, err := github.Releases("geofffranks", "spruce")
 	if err != nil {
 		return nil, fmt.Errorf("github api: %s", err)
 	}
-	l := github.LatestFrom("1.0.2", r)
-	for _, v := range l {
+	l := make([]string, 0, max)
+	releases := github.LatestFrom("1.0.2", r)
+	for i, v := range releases {
+		if i >= max {
+			break
+		}
+		l = append(l, v)
 		f, err := os.Create(fmt.Sprintf("/tmp/spruce-%s", v))
 		if err != nil {
 			return nil, fmt.Errorf("failed to save spruce v%s: %s", v, err)

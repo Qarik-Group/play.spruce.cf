@@ -7,6 +7,7 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"strconv"
 )
 
 var (
@@ -14,7 +15,17 @@ var (
 )
 
 func init() {
-	l, err := GetSpruces()
+	n := 5
+	if s := os.Getenv("SPRUCES_BACK"); s != "" {
+		v, err := strconv.ParseUint(s, 10, 64)
+		if err == nil {
+			log.Printf("unable to parse SPRUCE_BACK=%s: %s", s, err)
+		} else {
+			n = int(v)
+		}
+	}
+
+	l, err := GetSpruces(n)
 	if err != nil {
 		panic(fmt.Sprintf("init failed: %s", err))
 	}
