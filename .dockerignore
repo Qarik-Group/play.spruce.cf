@@ -1,0 +1,7 @@
+**
+!/*.go
+!/go.*
+!/assets
+!/client
+!/github
+!/util

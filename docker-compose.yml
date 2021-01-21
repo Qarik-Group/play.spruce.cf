@@ -1,0 +1,6 @@
+version: '3'
+
+services:
+  play:
+    image: starkandwayne/play-spruce-cf:latest
+    ports: ['8080:8080']
