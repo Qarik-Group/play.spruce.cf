@@ -2,6 +2,7 @@ package main
 
 import (
 	"log"
+	"math/rand"
 	"os"
 	"strconv"
 	"time"
@@ -17,6 +18,10 @@ func boom() {
 			n = int(v)
 		}
 	}
+
+	rand.Seed(time.Now().Unix())
+	n += rand.Intn(60)
+	log.Printf("waiting %d minutes (%f hours) before self-imploding...\n", n, float64(n)/60.0)
 
 	t := time.NewTicker(time.Minute * time.Duration(n))
 	<-t.C
