@@ -37,7 +37,7 @@ func Store(m *Merge) (string, error) {
 		return "", err
 	}
 	gist := Gist{
-		Description: "a bit o' spruce, from http://play.spruce.cf",
+		Description: "a bit o' spruce, from https://spruce.starkandwayne.com",
 		Public:      true,
 		Files: map[string]GistFile{
 			"spruce.json": GistFile{Content: string(data)},
