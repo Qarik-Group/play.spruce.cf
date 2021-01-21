@@ -9,7 +9,7 @@ import (
 )
 
 func boom() {
-	n := 1440
+	n := 12
 	if s := os.Getenv("LIVE_FOR"); s != "" {
 		v, err := strconv.ParseUint(s, 10, 64)
 		if err != nil {
@@ -20,7 +20,7 @@ func boom() {
 	}
 
 	rand.Seed(time.Now().Unix())
-	n += rand.Intn(60)
+	n = n * 60 + rand.Intn(60)
 	log.Printf("waiting %d minutes (%f hours) before self-imploding...\n", n, float64(n)/60.0)
 
 	t := time.NewTicker(time.Minute * time.Duration(n))
