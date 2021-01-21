@@ -18,7 +18,7 @@ func init() {
 	n := 5
 	if s := os.Getenv("SPRUCES_BACK"); s != "" {
 		v, err := strconv.ParseUint(s, 10, 64)
-		if err == nil {
+		if err != nil {
 			log.Printf("unable to parse SPRUCE_BACK=%s: %s", s, err)
 		} else {
 			n = int(v)
