@@ -33,6 +33,8 @@ func init() {
 }
 
 func main() {
+	go boom()
+
 	root, err := os.Getwd()
 	if err != nil {
 		panic(err)
